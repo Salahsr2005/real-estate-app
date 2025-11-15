@@ -1,8 +1,8 @@
 import { Alert } from "react-native";
 import { useEffect, useState, useCallback } from "react";
 
-interface UseAppwriteOptions<T, P extends Record<string, string | number>> {
-  fn: (params: P) => Promise<T>;
+interface UseAppwriteOptions<T, P extends Record<string, any> | void> {
+  fn: P extends void ? () => Promise<T> : (params: P) => Promise<T>;
   params?: P;
   skip?: boolean;
 }
@@ -11,12 +11,12 @@ interface UseAppwriteReturn<T, P> {
   data: T | null;
   loading: boolean;
   error: string | null;
-  refetch: (newParams: P) => Promise<void>;
+  refetch: (newParams?: P) => Promise<void>;
 }
 
-export const useAppwrite = <T, P extends Record<string, string | number>>({
+export const useAppwrite = <T, P extends Record<string, any> | void = void>({
   fn,
-  params = {} as P,
+  params,
   skip = false,
 }: UseAppwriteOptions<T, P>): UseAppwriteReturn<T, P> => {
   const [data, setData] = useState<T | null>(null);
@@ -24,12 +24,15 @@ export const useAppwrite = <T, P extends Record<string, string | number>>({
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(
-    async (fetchParams: P) => {
+    async (fetchParams?: P) => {
       setLoading(true);
       setError(null);
 
       try {
-        const result = await fn(fetchParams);
+        // Call fn with or without params depending on whether it accepts them
+        const result = fetchParams !== undefined 
+          ? await (fn as (params: P) => Promise<T>)(fetchParams)
+          : await (fn as () => Promise<T>)();
         setData(result);
       } catch (err: unknown) {
         const errorMessage =
@@ -49,7 +52,7 @@ export const useAppwrite = <T, P extends Record<string, string | number>>({
     }
   }, []);
 
-  const refetch = async (newParams: P) => await fetchData(newParams);
+  const refetch = async (newParams?: P) => await fetchData(newParams);
 
   return { data, loading, error, refetch };
 };

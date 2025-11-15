@@ -47,18 +47,25 @@ export async function logout () {
     }
 }
 export async function getUser() {
-    try {
-        const resopnse = await account.get();
-        if(resopnse.$id){
-            const userAvatar = avatar.getInitials(Response.name)
-            return{
-                ...resopnse,
-                avatar:userAvatar.toString(),
-            };
+  try {
+    const result = await account.get();
+    if (result.$id) {
+      // Option 1: Use .href
+      const userAvatar = avatar.getInitials(result.name);
+      
+      // Option 2: If Option 1 doesn't work, manually construct the URL
+      const avatarUrl = `${config.endpoint}/avatars/initials?name=${encodeURIComponent(result.name)}&project=${config.projectid}`;
 
-        }
-        return null
-    } catch (error) {
-        return null
+      return {
+        ...result,
+        avatar: userAvatar.href,
+        avatar: avatarUrl, // Use this if Option 1 doesn't work
+      };
     }
+
+    return null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 }

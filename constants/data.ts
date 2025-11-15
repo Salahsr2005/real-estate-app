@@ -69,7 +69,7 @@ export const categories = [
 
 export const settings = [
   {
-    title: "My Bookings",
+    title: "My Schedule",
     icon: icons.calendar,
   },
   {
@@ -97,7 +97,7 @@ export const settings = [
     icon: icons.info,
   },
   {
-    title: "Invite Friends",
+    title: "Parents Hub",
     icon: icons.people,
   },
 ];

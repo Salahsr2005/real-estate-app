@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "restate",
-    "slug": "restate",
+    "name": "Diwana",
+    "slug": "Diwana",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -23,10 +23,6 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-web-browser",
-        {
-          "experimentalLauncherActivity": true
-        },
       "expo-router",
       [
         "expo-splash-screen",
